@@ -35,18 +35,20 @@
 4. AndroidManifest.xml
   - Permissions
 	To integrate the library with the PlugPagService library in Android applications you must add the following permission to AndroidManifest.xml.
-
-	`<uses-permission android:name="br.com.uol.pagseguro.permission.MANAGE_PAYMENTS"/>`
+	```
+	<uses-permission android:name="br.com.uol.pagseguro.permission.MANAGE_PAYMENTS"/>
+	```
 
 	This permission allows the library to bind to PlugPagService , Moderninha Smart's embedded service , which manages all payment transactions.
 
   - Intent-filter
 	In order for your app to be chosen as the default payment app and receive Card Insertion Intents, you need to add the following code to your AndroidManifest.xml within your main Activity.
-
-	`<intent-filter>
+	```
+	<intent-filter>
 	      <action android:name="br.com.uol.pagseguro.PAYMENT"/>
 	      <category android:name="android.intent.category.DEFAULT"/>
-	</intent-filter>`
+	</intent-filter>
+	```
 
 ## Usage
 ```javascript

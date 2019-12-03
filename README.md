@@ -43,10 +43,10 @@
   - Intent-filter
 	In order for your app to be chosen as the default payment app and receive Card Insertion Intents, you need to add the following code to your AndroidManifest.xml within your main Activity.
 
-	`<intent-filter>`
-	      `<action android:name="br.com.uol.pagseguro.PAYMENT"/>`
-	      `<category android:name="android.intent.category.DEFAULT"/>`
-	`</intent-filter>`
+	`<intent-filter>
+	      <action android:name="br.com.uol.pagseguro.PAYMENT"/>
+	      <category android:name="android.intent.category.DEFAULT"/>
+	</intent-filter>`
 
 ## Usage
 ```javascript

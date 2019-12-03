@@ -71,5 +71,9 @@ var PlugPagActivationData = Object({
     activationCode: ""
 })
 
+export {
+    PlugPag, PlugPagPaymentData, PlugPagActivationData
+}
+
 
 export default PlugPagService;

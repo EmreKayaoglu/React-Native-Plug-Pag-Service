@@ -15,7 +15,10 @@ import java.util.Map;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPag;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagActivationData;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagAppIdentification;
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagCardInfoResult;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagInitializationResult;
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagNearFieldCardData;
+import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagNFCResult;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagPaymentData;
 import br.com.uol.pagseguro.plugpagservice.wrapper.PlugPagTransactionResult;
 
@@ -46,6 +49,7 @@ public class PlugPagServiceModule extends ReactContextBaseJavaModule {
             put("TYPE_CREDITO", PlugPag.TYPE_CREDITO);
             put("TYPE_DEBITO", PlugPag.TYPE_DEBITO);
             put("TYPE_VOUCHER", PlugPag.TYPE_VOUCHER);
+            put("TYPE_QRCODE", PlugPag.TYPE_QRCODE);
 
             put("INSTALLMENT_TYPE_A_VISTA", PlugPag.INSTALLMENT_TYPE_A_VISTA);
             put("INSTALLMENT_TYPE_PARC_VENDEDOR", PlugPag.INSTALLMENT_TYPE_PARC_VENDEDOR);
@@ -101,7 +105,7 @@ public class PlugPagServiceModule extends ReactContextBaseJavaModule {
 
     // Cria a identificação do aplicativo
     @ReactMethod
-    public void getAppIdendification(String name, String version, Callback callback) {
+    public void setAppIdentification(String name, String version, Callback callback) {
         PlugPagAppIdentificationWrapper appIdentification = new PlugPagAppIdentificationWrapper(name, version);
         appIdentifications.add(appIdentification);
         callback.invoke(appIdentification.tag);
@@ -174,6 +178,72 @@ public class PlugPagServiceModule extends ReactContextBaseJavaModule {
             }
         } else {
             errorCallback.invoke("PlugPagPaymentData error");
+        }
+    }
+
+    @ReactMethod
+    public void calculateInstallments(String plugPagId, String saleValue, Callback successCallback, Callback errorCallback) {
+        if (saleValue != null && saleValue != "0") {
+
+            PlugPagWrapper plugPagWrapper = null;
+
+            for (PlugPagWrapper wrapper: plugPags) {
+                if (wrapper.equals(plugPagId)) {
+                    plugPagWrapper = wrapper;
+                    break;
+                }
+            }
+
+            if (plugPagWrapper != null) {
+                String[] installments = plugPagWrapper.plugPag.calculateInstallments(saleValue);
+                successCallback.invoke(installments);
+            } else {
+                errorCallback.invoke("Can't find plugPag");
+            }
+        } else {
+            errorCallback.invoke("PlugPagSaleValue error");
+        }
+    }
+
+    @ReactMethod
+    public void readCard(String plugPagId, Callback successCallback, Callback errorCallback) {
+        PlugPagWrapper plugPagWrapper = null;
+
+        for (PlugPagWrapper wrapper: plugPags) {
+            if (wrapper.equals(plugPagId)) {
+                plugPagWrapper = wrapper;
+                break;
+            }
+        }
+
+        if (plugPagWrapper != null) {
+            PlugPagCardInfoResult dataCard = plugPagWrapper.plugPag.getCardData();
+            successCallback.invoke(dataCard.getResult());
+        } else {
+            errorCallback.invoke("Can't find plugPag");
+        }
+    }
+
+    @ReactMethod
+    public void readNFCCard(String plugPagId, Callback successCallback, Callback errorCallback) {
+        PlugPagWrapper plugPagWrapper = null;
+
+        for (PlugPagWrapper wrapper: plugPags) {
+            if (wrapper.equals(plugPagId)) {
+                plugPagWrapper = wrapper;
+                break;
+            }
+        }
+
+        if (plugPagWrapper != null) {
+            PlugPagNearFieldCardData dataCard = new PlugPagNearFieldCardData();
+            dataCard.setStartSlot(1);
+            dataCard.setEndSlot(1);
+
+            PlugPagNFCResult result = plugPagWrapper.plugPag.readFromNFCCard(dataCard);
+            successCallback.invoke(result.getResult());
+        } else {
+            errorCallback.invoke("Can't find plugPag");
         }
     }
 
